@@ -13,12 +13,22 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 import environ
 import os
 
-# Initialize environment variables
-env = environ.Env()
-environ.Env.read_env()  # Reads the .env file
+
+# Import environment variables
+env = environ.Env(
+    ADMIN_EMAILS=(list, []),
+    ADMIN_NAMES=(list, []),
+    ALLOWED_HOSTS=(list, []),
+    DEBUG=(bool, False),
+    MANAGER_EMAILS=(list, []),
+    MANAGER_NAMES=(list, []),
+)
+environ.Env.read_env()
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
@@ -29,7 +39,8 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost'])
+ALLOWED_HOSTS = env('ALLOWED_HOSTS')
+
 
 # Application definition
 
@@ -79,19 +90,21 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'gutendex.wsgi.application'
 
+
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DATABASE_NAME', default='gutendex'),
-        'USER': env('DATABASE_USER', default='gutendex'),
-        'PASSWORD': env('DATABASE_PASSWORD', default='gutendex'),
-        'HOST': env('DATABASE_HOST', default='db'),  # This should match the service name in docker-compose
-        'PORT': env('DATABASE_PORT', default='5432'),
+        'NAME': env('DATABASE_NAME'),
+        'USER': env('DATABASE_USER'),
+        'PASSWORD': env('DATABASE_PASSWORD'),
+        'HOST': env('DATABASE_HOST'),
+        'PORT': env('DATABASE_PORT'),
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -111,6 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
@@ -124,6 +138,7 @@ USE_L10N = True
 
 USE_TZ = True
 
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
@@ -131,23 +146,26 @@ STATIC_ROOT = env('STATIC_ROOT')
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
+
 # User-uploaded files
 MEDIA_ROOT = env('MEDIA_ROOT')
 MEDIA_URL = '/media/'
 
+
 # Users for error reporting
-#ADMIN_EMAILS = env('ADMIN_EMAILS')
-#ADMIN_NAMES = env('ADMIN_NAMES')
-#ADMIN_COUNT = len(ADMIN_EMAILS)
-#ADMINS = [
-#    (ADMIN_NAMES[i], ADMIN_EMAILS[i]) for i in range(ADMIN_COUNT)
-#]
-#MANAGER_EMAILS = env('MANAGER_EMAILS')
-#MANAGER_NAMES = env('MANAGER_NAMES')
-#MANAGER_COUNT = len(MANAGER_EMAILS)
-#MANAGERS = [
-#    (MANAGER_NAMES[i], MANAGER_EMAILS[i]) for i in range(MANAGER_COUNT)
-#]
+ADMIN_EMAILS = env('ADMIN_EMAILS')
+ADMIN_NAMES = env('ADMIN_NAMES')
+ADMIN_COUNT = len(ADMIN_EMAILS)
+ADMINS = [
+    (ADMIN_NAMES[i], ADMIN_EMAILS[i]) for i in range(ADMIN_COUNT)
+]
+MANAGER_EMAILS = env('MANAGER_EMAILS')
+MANAGER_NAMES = env('MANAGER_NAMES')
+MANAGER_COUNT = len(MANAGER_EMAILS)
+MANAGERS = [
+    (MANAGER_NAMES[i], MANAGER_EMAILS[i]) for i in range(MANAGER_COUNT)
+]
+
 
 # Email
 EMAIL_HOST = env('EMAIL_HOST')
@@ -155,12 +173,14 @@ EMAIL_HOST_ADDRESS = env('EMAIL_HOST_ADDRESS')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 
+
 # Directory paths for catalog files and updater
 BASE_CATALOG_DIR = os.path.join(BASE_DIR, 'catalog_files')
 CATALOG_RDF_DIR = os.path.join(BASE_CATALOG_DIR, 'rdf')
 CATALOG_INDEX_DIR = os.path.join(CATALOG_RDF_DIR, 'index.json')
 CATALOG_LOG_DIR = os.path.join(BASE_CATALOG_DIR, 'log')
 CATALOG_TEMP_DIR = os.path.join(BASE_CATALOG_DIR, 'tmp')
+
 
 # Settings for Django REST Framework JSON API
 REST_FRAMEWORK = {
