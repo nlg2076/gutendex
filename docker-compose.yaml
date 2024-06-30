@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: gutendex_app_container
+    ports:
+      - "8000:8000" # Exposing the Django development server port
+    volumes:
+      - .:/usr/src/app
+    env_file:
+      - .env
+    entrypoint: /usr/src/app/entrypoint.sh
+
+  db:
+    image: postgres:9.6
+    container_name: postgres_container
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: gutendex
+      POSTGRES_PASSWORD: gutendex
+      POSTGRES_DB: gutendex
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
