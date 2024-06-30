@@ -8,6 +8,7 @@ services:
       - "8000:8000" # Exposing the Django development server port
     volumes:
       - .:/usr/src/app
+      - /home/neilg/Documents/Bootcamp/exam-1-gutendex/project_v1/catalog_files/catalog/cache/epub:/usr/src/app/catalog/cache/epub
     env_file:
       - .env
     entrypoint: /usr/src/app/entrypoint.sh
