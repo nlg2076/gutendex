@@ -1,5 +1,7 @@
 #!/bin/bash
 # Start PostgreSQL service
 service postgresql start
-# Keep the container running
-tail -f /dev/null
+# Apply database migrations
+python gutendex.py migrate
+# Start the Django development server
+python gutendex.py runserver 0.0.0.0:8000

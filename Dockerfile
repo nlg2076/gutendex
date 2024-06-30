@@ -7,11 +7,25 @@ WORKDIR /usr/src/app
 # Copy the current directory contents into the container at /usr/src/app
 COPY . .
 
-# Install any needed packages specified in requirements.txt
+# Add PostgreSQL APT repository and install PostgreSQL 9.6
+RUN apt-get update && \
+    apt-get install -y wget gnupg && \
+    wget -qO - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
+    . /etc/os-release && echo "deb http://apt.postgresql.org/pub/repos/apt/ ${VERSION_CODENAME}-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list && \
+    apt-get update && \
+    apt-get install -y postgresql-9.6 postgresql-contrib-9.6
+
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install PostgreSQL client
-RUN apt-get update && apt-get install -y postgresql-client
+# Copy the entrypoint script into the container
+COPY entrypoint.sh /usr/src/app/entrypoint.sh
 
-# Test command to verify the setup
-CMD ["python", "--version"]
+# Make the entrypoint script executable
+RUN chmod +x /usr/src/app/entrypoint.sh
+
+# Expose the default PostgreSQL port
+EXPOSE 5432
+
+# Use the entrypoint script to start PostgreSQL and keep the container running
+ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
